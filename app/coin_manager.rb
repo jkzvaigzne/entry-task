@@ -1,10 +1,14 @@
 class CoinManager
+  attr_accessor :balance
+
   def initialize
-    @balance = nil
+    @balance = 0.0
   end
 
   def add_coins(amount)
-    @balance
+    if amount > 0
+      @balance += amount
+    end
   end
 
   def get_balance
@@ -19,6 +23,6 @@ class CoinManager
   end
 
   def reset_balance
-    20
+    @balance = 0.0
   end
 end

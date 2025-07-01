@@ -8,13 +8,17 @@ class DisplayManager
   end
 
   def format_product_list(products)
-    "Available Products:\n B2 - Soda Pop - 2.20"
+    product_list = "Available Products:"
+    products.each do |code, product|
+      product_list += "\n #{code} - #{product[:name]} - #{product[:price]}"
+    end
+    product_list;
   end
 
   def format_transaction_result(product_name, change)
-    basic_result = "Dispensed #{product_name}"
+    basic_result = "Dispensed #{product_name} with change #{change}"
     last_transaction = @transaction_processor.last_transaction_details
 
-    basic_result
+    "#{basic_result}\n Transaction details: #{last_transaction}"
   end
 end

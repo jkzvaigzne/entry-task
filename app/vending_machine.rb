@@ -3,17 +3,28 @@ require_relative 'product_catalog'
 require_relative 'transaction_processor'
 require_relative 'display_manager'
 
-class Machine
+
+class VendingMachine
+  attr_accessor :products, :coin_manager, :product_catalog, :transaction_processor, :display_manager
+
+  def initialize
+    @coin_manager = CoinManager.new
+    @product_catalog = ProductCatalog.new
+    @transaction_processor = TransactionProcessor.new
+    @display_manager = DisplayManager.new(@transaction_processor)
+  end
+  
   def insert(amount)
-    @coin_manager.add_coins(amount)
+    @coin_manager.add_coins(amount);
     balance
   end
 
   def select_product(code)
     product = @product_catalog.find_product(code)
-
-    raise 'No product' if product.nil?
-    raise 'Insufficient funds' if balance < product[:price]
+    
+    return 'Invalid product' if product.nil?
+    return 'Insufficient funds' if balance < product[:price]
+    return 'Product out of stock' if 0 >= product[:stock]
 
     @product_catalog.update_stock(code)
     change = @transaction_processor.process_transaction(product, balance)
@@ -34,7 +45,8 @@ class Machine
   end
 
   def cancel_transaction
-    returned_amount = @coin_manager.reset_balance
-    "Returned #{returned_amount}"
+    balance = @coin_manager.get_balance;
+    @coin_manager.reset_balance
+    "Returned #{balance}"
   end
 end
